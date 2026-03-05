@@ -11,7 +11,7 @@ print("Iniciando proceso de limpieza...")
 # 1. CARGA DE LA BASE PRINCIPAL
 # Usamos os.path.join para evitar errores de rutas entre Windows/Linux
 try:
-    df = pd.read_csv(os.path.join(base_path, 'atus_anual_2021.csv'), 
+    df = pd.read_csv(os.path.join(base_path, 'atus_anual_2019.csv'), 
                     dtype={'ID_ENTIDAD': str, 'ID_MUNICIPIO': str, 'ID_DIA': str})
 
     # 2. CARGA DE TODOS LOS CATÁLOGOS (Nombres actualizados a 'tc_')
