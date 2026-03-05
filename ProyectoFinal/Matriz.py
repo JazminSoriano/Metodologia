@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 base_path = os.path.dirname(__file__)
-df = pd.read_csv(os.path.join(base_path, 'atus_anual_2024.csv'))
+df = pd.read_csv(os.path.join(base_path, 'atus_anual_2022.csv'))
 
 # 1. Seleccionamos solo las columnas numéricas que tienen sentido comparar
 # Convertimos EDAD a numérico (ignorando errores de "Se fugó")
