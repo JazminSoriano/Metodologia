@@ -6,7 +6,7 @@ import os
 # Configuración de rutas
 base_path = os.path.dirname(__file__)
 # Asegúrate de que el nombre del archivo coincida con el que quieres graficar
-archivo_a_graficar = 'atus_anual_2016.csv' 
+archivo_a_graficar = 'atus_anual_2015.csv' 
 df = pd.read_csv(os.path.join(base_path, archivo_a_graficar))
 
 # 1. Limpieza de datos específicos para la matriz
