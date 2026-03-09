@@ -1,3 +1,4 @@
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -5,31 +6,40 @@ import os
 
 # Configuración de rutas
 base_path = os.path.dirname(__file__)
-# Asegúrate de que el nombre del archivo coincida con el que quieres graficar
-archivo_a_graficar = 'atus_anual_2022.csv' 
-df = pd.read_csv(os.path.join(base_path, archivo_a_graficar))
+archivo_maestro = os.path.join(base_path, 'TIJUANA_MASTER.csv')
 
-# 1. Limpieza de datos específicos para la matriz
-# Convertimos EDAD a numérico (ignorando errores de texto como "Se fugó")
-df['EDAD_LIMPIA'] = pd.to_numeric(df['ID_EDAD'], errors='coerce')
+print("--- Generando Matriz de Correlación de Inteligencia de Negocios ---")
 
-# Seleccionamos SOLO las columnas que queremos comparar
-columnas_analisis = ['MES', 'ID_DIA', 'ID_HORA', 'EDAD_LIMPIA', 'ANIO']
-df_numerico = df[columnas_analisis].dropna()
+if os.path.exists(archivo_maestro):
+    # Cargar los datos integrados
+    df = pd.read_csv(archivo_maestro)
 
-# 2. Calculamos la matriz usando SOLO el dataframe filtrado
-# Este era el error: antes usabas 'df' completo, ahora usamos 'df_numerico'
-matriz = df_numerico.corr(numeric_only=True)
+    # 1. Preparación de variables para la matriz
+    # Convertimos categorías a números para que Python pueda calcular correlaciones
+    # Creamos un subconjunto con las variables que realmente impactan el tráfico
+    df_analisis = df[['MES', 'ID_HORA', 'ID_DIA', 'AUTOMOVIL', 'MOTOCICLET']].copy()
+    
+    # Añadimos una variable numérica para el tipo de accidente (Factor de Severidad)
+    # Esto ayuda a ver si ciertos horarios se asocian a tipos específicos de choque
+    df_analisis['TIPO_NUM'] = df['TIPACCID'].astype('category').cat.codes
 
-# 3. Configuración visual de la gráfica (Heatmap)
-plt.figure(figsize=(10, 8))
-sns.heatmap(matriz, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+    # 2. Calcular la matriz de correlación (Método de Pearson)
+    matriz_corr = df_analisis.corr()
 
-# Título dinámico
-plt.title(f'Matriz de Correlación: Variables de Accidentes {archivo_a_graficar[-8:-4]}')
+    # 3. Diseño visual de la Matriz (Heatmap)
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(matriz_corr, annot=True, cmap='RdYlGn', fmt=".2f", linewidths=0.5)
+    
+    plt.title('Matriz de Correlación: Factores de Siniestralidad en Tijuana (2022-2024)', fontsize=14)
+    plt.tight_layout()
 
-# 4. Guardar la imagen
-plt.savefig(os.path.join(base_path, 'correlacion.png'))
-print("--- MATRIZ GENERADA CORRECTAMENTE ---")
-print(f"Se analizó el archivo: {archivo_a_graficar}")
-print("Busca el archivo 'correlacion.png' en tu carpeta izquierda.")
+    # Guardar el resultado para la tesis
+    plt.savefig(os.path.join(base_path, 'matriz_tijuana_final.png'))
+    print("✅ ¡ÉXITO! Matriz generada como 'matriz_tijuana_final.png'")
+    
+    # Tip para la interpretación en tu tesis
+    print("\n💡 Tip de BI: Busca valores cercanos a 1 o -1.")
+    print("Si ID_HORA y TIPO_NUM tienen correlación, significa que ciertos accidentes son exclusivos de las horas pico.")
+
+else:
+    print("❌ Error: Primero debes ejecutar el script de integración para crear TIJUANA_MASTER.csv")
